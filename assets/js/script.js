@@ -15,6 +15,22 @@ function updateWeather(city) {
       // Log the current weather data
       console.log(currentData);
 
+       // Extract information about the current weather
+       var currentDate = new Date(currentData.dt * 1000);
+       var cityName = currentData.name;
+       var temperature = currentData.main.temp;
+       var humidity = currentData.main.humidity;
+       var windSpeed = currentData.wind.speed;
+       var weatherIcon = currentData.weather[0].icon;
+
+       // Log the additional information
+       console.log("Date: " + currentDate.toLocaleDateString());
+       console.log("City: " + cityName);
+       console.log("Temperature: " + temperature);
+       console.log("Humidity: " + humidity);
+       console.log("Wind Speed: " + windSpeed);
+       console.log("Weather Icon: " + weatherIcon);
+       
       // Extract latitude and longitude for the forecast
       var lat = currentData.coord.lat;
       var lon = currentData.coord.lon;
