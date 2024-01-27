@@ -15,22 +15,43 @@ function updateWeather(city) {
       // Log the current weather data
       console.log(currentData);
 
-       // Extract information about the current weather
-       var currentDate = new Date(currentData.dt * 1000);
-       var cityName = currentData.name;
-       var temperature = currentData.main.temp;
-       var humidity = currentData.main.humidity;
-       var windSpeed = currentData.wind.speed;
-       var weatherIcon = currentData.weather[0].icon;
+      // Extract information about the current weather
+      var currentDate = new Date(currentData.dt * 1000);
+      var cityName = currentData.name;
+      var temperature = currentData.main.temp;
+      var humidity = currentData.main.humidity;
+      var windSpeed = currentData.wind.speed;
+      var weatherIcon = currentData.weather[0].icon;
 
-       // Log the additional information
-       console.log("Date: " + currentDate.toLocaleDateString());
-       console.log("City: " + cityName);
-       console.log("Temperature: " + temperature);
-       console.log("Humidity: " + humidity);
-       console.log("Wind Speed: " + windSpeed);
-       console.log("Weather Icon: " + weatherIcon);
-       
+      // Clear the existing content before appending new data
+      $('#today').empty();
+      // Log the additional information
+      var targetDiv = $('#today');
+
+      var cardDiv = $('<div class="card">');
+      targetDiv.append(cardDiv);
+
+      var heading = $('<h4 class="card-title p-2 font-weight-bold" id="heading">');
+      heading.text(cityName + ' ' + '(' + currentDate.toLocaleDateString() + ')' + ' ' + weatherIcon)
+
+     // Convert temperature from Kelvin to Celsius for current temperature
+      var temperatureKelvin = currentData.main.temp;
+      var temperatureCelsius = temperatureKelvin - 273.15;
+
+      var currentTemp = $('<p class="card-text p-2" id="currentTemp">');
+      currentTemp.text('Temperature: ' + temperatureCelsius.toFixed(2) + ' °C');
+
+
+
+      var currentWind = $('<p class="card-text p-2" id="currentWind">');
+      currentWind.text('Wind Speed: ' + windSpeed + ' KPH')
+      var currentHumidity = $('<p class="card-text p-2" id="currentHumidity">');
+      currentHumidity.text('Humidity: ' + humidity + ' %')
+      cardDiv.append(heading, currentTemp, currentWind, currentHumidity);
+
+       // Update and retrieve search history using Local Storage
+       updateSearchHistory(city);
+
       // Extract latitude and longitude for the forecast
       var lat = currentData.coord.lat;
       var lon = currentData.coord.lon;
@@ -68,8 +89,61 @@ function updateWeather(city) {
 
           // Log the collected daily information
           console.log(dailyInfo);
+
+          // Clear the existing content before appending new data
+          $('#forecast').empty();
+
+          // Display daily information on the website
+          var forecastContainer = $('#forecast');
+
+          dailyInfo.forEach(function (dayInfo) {
+            var dayContainer = $('<div class="day-container card col-lg-2 text-white m-1">');
+
+            var dateElement = $('<p class="date">');
+            dateElement.text(dayInfo.date);
+
+            var weatherIconElement = $('<img class="weather-icon" id="icon">');
+            weatherIconElement.attr('src', 'https://openweathermap.org/img/w/' + dayInfo.weatherIcon + '.png');
+
+
+            // Convert temperature from Kelvin to Celsius for daily information
+              var temperatureKelvin = dayInfo.temperature;
+              var temperatureCelsius = temperatureKelvin - 273.15;
+              var temperatureElement = $('<p class="temperature">');
+              temperatureElement.text('Temp: ' + temperatureCelsius.toFixed(2) + ' °C');
+
+            var windSpeedElement = $('<p class="wind-speed">');
+            windSpeedElement.text('Wind: ' + dayInfo.windSpeed);
+
+            var humidityElement = $('<p class="humidity">');
+            humidityElement.text('Humidity: ' + dayInfo.humidity);
+
+            dayContainer.append(dateElement, weatherIconElement, temperatureElement, windSpeedElement, humidityElement);
+            forecastContainer.append(dayContainer);
+          });
         });
     });
+}
+
+// Function to update and retrieve search history using Local Storage
+function updateSearchHistory(city) {
+  var searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
+  searchHistory.unshift(city);
+  searchHistory = searchHistory.slice(0, 8); // Limit to the last 5 searches
+  localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+
+  // Update the search history display on the website
+  var historyContainer = $('#history');
+  historyContainer.empty();
+  searchHistory.forEach(function (search) {
+      var historyItem = $('<div class=" btn btn-secondary m-1 history-item">');
+      historyItem.text(search);
+      historyItem.on('click', function () {
+          // On click, update weather for the clicked city
+          updateWeather(search);
+      });
+      historyContainer.append(historyItem);
+  });
 }
 
 // Event listener for the search button
