@@ -21,6 +21,7 @@ This is a simple web application that allows users to check the current weather 
 
 
 
+
 # Usage
 
 - Open the index.html file in a web browser.
