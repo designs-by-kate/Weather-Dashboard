@@ -16,8 +16,9 @@ This is a simple web application that allows users to check the current weather 
 ![image](https://github.com/designs-by-kate/Weather-Dashboard/assets/146155569/515002fa-17b3-40ff-9c26-b01a0f510386)
 
 ## Mobile View
-![image](https://github.com/designs-by-kate/Weather-Dashboard/assets/146155569/eb64d519-1e9e-4ee8-8a5f-2b7ca4a90d6c)
-![image](https://github.com/designs-by-kate/Weather-Dashboard/assets/146155569/3aab191e-569e-4b26-92f1-ed7d7a19aad6)
+![image](https://github.com/designs-by-kate/Weather-Dashboard/assets/146155569/a847d785-ce97-4651-b868-3a308cc88b3b)
+![image](https://github.com/designs-by-kate/Weather-Dashboard/assets/146155569/12ef0a1f-c96a-498f-a590-6440d826bfb1)
+
 
 
 # Usage
