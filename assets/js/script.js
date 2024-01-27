@@ -23,6 +23,8 @@ function updateWeather(city) {
       var windSpeed = currentData.wind.speed;
       var weatherIcon = currentData.weather[0].icon;
 
+     // Clear the existing content before appending new data
+      $('#today').empty();
       // Log the additional information
       var targetDiv = $('#today');
 
