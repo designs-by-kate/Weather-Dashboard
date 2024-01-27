@@ -118,7 +118,7 @@ function updateWeather(city) {
 function updateSearchHistory(city) {
   var searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
   searchHistory.unshift(city);
-  //searchHistory = searchHistory.slice(0, 5); // Limit to the last 5 searches
+  searchHistory = searchHistory.slice(0, 10); // Limit to the last 5 searches
   localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
 
   // Update the search history display on the website
@@ -127,6 +127,10 @@ function updateSearchHistory(city) {
   searchHistory.forEach(function (search) {
       var historyItem = $('<div class="history-item">');
       historyItem.text(search);
+      historyItem.on('click', function () {
+          // On click, update weather for the clicked city
+          updateWeather(search);
+      });
       historyContainer.append(historyItem);
   });
 }
