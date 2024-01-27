@@ -23,6 +23,8 @@ function updateWeather(city) {
       var windSpeed = currentData.wind.speed;
       var weatherIcon = currentData.weather[0].icon;
 
+      // Clear the existing content before appending new data
+      $('#today').empty();
       // Log the additional information
       var targetDiv = $('#today');
 
@@ -30,7 +32,7 @@ function updateWeather(city) {
       targetDiv.append(cardDiv);
 
       var heading = $('<h5 class="card-title" id="heading">');
-      heading.text(cityName + ' ' + currentDate.toLocaleDateString() + ' ' + weatherIcon);
+      heading.text(cityName + ' ' + currentDate.toLocaleDateString() + ' ' + weatherIcon)
 
       var currentTemp = $('<p class="card-text" id="currentTemp">');
       currentTemp.text('Temperature: ' + temperature)
@@ -77,6 +79,34 @@ function updateWeather(city) {
 
           // Log the collected daily information
           console.log(dailyInfo);
+
+          // Clear the existing content before appending new data
+          $('#forecast').empty();
+
+          // Display daily information on the website
+          var forecastContainer = $('#forecast');
+
+          dailyInfo.forEach(function (dayInfo) {
+            var dayContainer = $('<div class="day-container card col-lg-2 bg-primary text-white m-1">');
+
+            var dateElement = $('<p class="date">');
+            dateElement.text(dayInfo.date);
+
+            var weatherIconElement = $('<img class="weather-icon">');
+            weatherIconElement.attr('src', 'https://openweathermap.org/img/w/' + dayInfo.weatherIcon + '.png');
+
+            var temperatureElement = $('<p class="temperature">');
+            temperatureElement.text('Temp: ' + dayInfo.temperature);
+
+            var windSpeedElement = $('<p class="wind-speed">');
+            windSpeedElement.text('Wind: ' + dayInfo.windSpeed);
+
+            var humidityElement = $('<p class="humidity">');
+            humidityElement.text('Humidity: ' + dayInfo.humidity);
+
+            dayContainer.append(dateElement, weatherIconElement, temperatureElement, windSpeedElement, humidityElement);
+            forecastContainer.append(dayContainer);
+          });
         });
     });
 }
