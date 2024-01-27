@@ -42,6 +42,9 @@ function updateWeather(city) {
       currentHumidity.text('Humidity: ' + humidity)
       cardDiv.append(heading, currentTemp, currentWind, currentHumidity);
 
+       // Update and retrieve search history using Local Storage
+       updateSearchHistory(city);
+
       // Extract latitude and longitude for the forecast
       var lat = currentData.coord.lat;
       var lon = currentData.coord.lon;
@@ -109,6 +112,23 @@ function updateWeather(city) {
           });
         });
     });
+}
+
+// Function to update and retrieve search history using Local Storage
+function updateSearchHistory(city) {
+  var searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
+  searchHistory.unshift(city);
+  //searchHistory = searchHistory.slice(0, 5); // Limit to the last 5 searches
+  localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+
+  // Update the search history display on the website
+  var historyContainer = $('#history');
+  historyContainer.empty();
+  searchHistory.forEach(function (search) {
+      var historyItem = $('<div class="history-item">');
+      historyItem.text(search);
+      historyContainer.append(historyItem);
+  });
 }
 
 // Event listener for the search button
