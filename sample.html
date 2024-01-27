@@ -31,17 +31,12 @@
         <h2 id="form-heading" class="mt-1 h3 form-label">
           Search for a City:
         </h2>
-        <form id="search-form" class="form">
-          <div class="form-group">
-            <div class="input-group">
-              <input class="form-input weather-search" type="text" id="search-input" placeholder="London"
-              aria-labelledby="form-heading" aria-controls="today forecast" >
-            </div>
-            <div class="input-group-append">
-              <button type="submit" class="btn btn-primary search-button" id="search-button" aria-label="submit search">Search</button>
-              <hr class="hr weather-hr" />
+        <form class="form-inline w-100 m-1" id="search-form" >
+          <div class="list-group w-100">
+            <input type="text" class="form-input weather-search mb-1 mr-2 w-100" id="search-input" placeholder="London">
           </div>
-          </div>
+          <button type="submit" class="btn search-button btn-primary" id="search-button" aria-label="submit search">Search</button>
+          <hr class="hr weather-hr border" />
         </form>
 
         <div class="list-group" id="history">

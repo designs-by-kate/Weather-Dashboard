@@ -31,15 +31,22 @@ function updateWeather(city) {
       var cardDiv = $('<div class="card">');
       targetDiv.append(cardDiv);
 
-      var heading = $('<h5 class="card-title" id="heading">');
-      heading.text(cityName + ' ' + currentDate.toLocaleDateString() + ' ' + weatherIcon)
+      var heading = $('<h4 class="card-title p-2 font-weight-bold" id="heading">');
+      heading.text(cityName + ' ' + '(' + currentDate.toLocaleDateString() + ')' + ' ' + weatherIcon)
 
-      var currentTemp = $('<p class="card-text" id="currentTemp">');
-      currentTemp.text('Temperature: ' + temperature)
-      var currentWind = $('<p class="card-text" id="currentWind">');
-      currentWind.text('Wind Speed: ' + windSpeed)
-      var currentHumidity = $('<p class="card-text" id="currentHumidity">');
-      currentHumidity.text('Humidity: ' + humidity)
+     // Convert temperature from Kelvin to Celsius for current temperature
+      var temperatureKelvin = currentData.main.temp;
+      var temperatureCelsius = temperatureKelvin - 273.15;
+
+      var currentTemp = $('<p class="card-text p-2" id="currentTemp">');
+      currentTemp.text('Temperature: ' + temperatureCelsius.toFixed(2) + ' °C');
+
+
+
+      var currentWind = $('<p class="card-text p-2" id="currentWind">');
+      currentWind.text('Wind Speed: ' + windSpeed + ' KPH')
+      var currentHumidity = $('<p class="card-text p-2" id="currentHumidity">');
+      currentHumidity.text('Humidity: ' + humidity + ' %')
       cardDiv.append(heading, currentTemp, currentWind, currentHumidity);
 
        // Update and retrieve search history using Local Storage
@@ -90,16 +97,20 @@ function updateWeather(city) {
           var forecastContainer = $('#forecast');
 
           dailyInfo.forEach(function (dayInfo) {
-            var dayContainer = $('<div class="day-container card col-lg-2 bg-primary text-white m-1">');
+            var dayContainer = $('<div class="day-container card col-lg-2 text-white m-1">');
 
             var dateElement = $('<p class="date">');
             dateElement.text(dayInfo.date);
 
-            var weatherIconElement = $('<img class="weather-icon">');
+            var weatherIconElement = $('<img class="weather-icon" id="icon">');
             weatherIconElement.attr('src', 'https://openweathermap.org/img/w/' + dayInfo.weatherIcon + '.png');
 
-            var temperatureElement = $('<p class="temperature">');
-            temperatureElement.text('Temp: ' + dayInfo.temperature);
+
+            // Convert temperature from Kelvin to Celsius for daily information
+              var temperatureKelvin = dayInfo.temperature;
+              var temperatureCelsius = temperatureKelvin - 273.15;
+              var temperatureElement = $('<p class="temperature">');
+              temperatureElement.text('Temp: ' + temperatureCelsius.toFixed(2) + ' °C');
 
             var windSpeedElement = $('<p class="wind-speed">');
             windSpeedElement.text('Wind: ' + dayInfo.windSpeed);
@@ -118,14 +129,14 @@ function updateWeather(city) {
 function updateSearchHistory(city) {
   var searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
   searchHistory.unshift(city);
-  searchHistory = searchHistory.slice(0, 10); // Limit to the last 5 searches
+  searchHistory = searchHistory.slice(0, 8); // Limit to the last 5 searches
   localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
 
   // Update the search history display on the website
   var historyContainer = $('#history');
   historyContainer.empty();
   searchHistory.forEach(function (search) {
-      var historyItem = $('<div class="history-item">');
+      var historyItem = $('<div class=" btn btn-secondary m-1 history-item">');
       historyItem.text(search);
       historyItem.on('click', function () {
           // On click, update weather for the clicked city
