@@ -1,5 +1,37 @@
-// This is our API key
+// This is my API key
 var APIKey = "68d8ae14240405aabf44b39f20638690";
+
+// Function to update and retrieve search history using Local Storage
+function updateSearchHistory(city) {
+  var searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
+  // Add the current city to the beginning of the search history array
+  searchHistory.unshift(city);
+  searchHistory = searchHistory.slice(0, 8); // Limit to the last 8 searches
+  localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+
+  // Update the search history display on the website
+  var historyContainer = $('#history');
+  // Clear the existing content in the search history container
+  historyContainer.empty();
+  // Iterate through each item in the search history
+  searchHistory.forEach(function (search) {
+    // Create a button element for each search history item
+    var historyItem = $('<div class="btn btn-secondary m-1 history-item">');
+    // Set the text of the button to the city name
+    historyItem.text(search);
+    // Attach a click event listener to each history item button
+    historyItem.on('click', function () {
+      // On click, update weather for the clicked city
+      updateWeather(search);
+    });
+    historyContainer.append(historyItem);
+  });
+}
+
+// Function to convert temperature from Kelvin to Celsius
+function kelvinToCelsius(temperatureKelvin) {
+  return (temperatureKelvin - 273.15).toFixed(2);
+}
 
 // Function to update weather based on user input
 function updateWeather(city) {
@@ -12,13 +44,11 @@ function updateWeather(city) {
       return response.json();
     })
     .then(function (currentData) {
-      // Log the current weather data
-      console.log(currentData);
-
+      
       // Extract information about the current weather
-      var currentDate = new Date(currentData.dt * 1000);
+      var currentDate = new Date(currentData.dt * 1000); // Extract the current date from the API response and convert it to a JavaScript Date object
       var cityName = currentData.name;
-      var temperature = currentData.main.temp;
+      var temperatureCelsiusCurrent = kelvinToCelsius(currentData.main.temp); // Convert the temperature from Kelvin to Celsius using the kelvinToCelsius function
       var humidity = currentData.main.humidity;
       var windSpeed = currentData.wind.speed;
       var weatherIcon = currentData.weather[0].icon;
@@ -32,25 +62,27 @@ function updateWeather(city) {
       targetDiv.append(cardDiv);
 
       var heading = $('<h4 class="card-title p-2 font-weight-bold" id="heading">');
-      heading.text(cityName + ' ' + '(' + currentDate.toLocaleDateString() + ')' + ' ' + weatherIcon)
+      heading.text(cityName + ' (' + currentDate.toLocaleDateString() + ') '); // Format the current date to a user-friendly string based on the user's locale
 
-     // Convert temperature from Kelvin to Celsius for current temperature
-      var temperatureKelvin = currentData.main.temp;
-      var temperatureCelsius = temperatureKelvin - 273.15;
+      var weatherIconElement = $('<img class="weather-icon" id="icon">');
+      // Set the source (src) attribute of the image element
+      // The source URL is dynamically constructed based on the weather icon code received from the API
+      weatherIconElement.attr('src', 'https://openweathermap.org/img/w/' + weatherIcon + '.png');
+      heading.append(weatherIconElement);
 
       var currentTemp = $('<p class="card-text p-2" id="currentTemp">');
-      currentTemp.text('Temperature: ' + temperatureCelsius.toFixed(2) + ' °C');
-
-
+      currentTemp.text('Temperature: ' + temperatureCelsiusCurrent + ' °C');
 
       var currentWind = $('<p class="card-text p-2" id="currentWind">');
-      currentWind.text('Wind Speed: ' + windSpeed + ' KPH')
+      currentWind.text('Wind Speed: ' + windSpeed + ' KPH');
+
       var currentHumidity = $('<p class="card-text p-2" id="currentHumidity">');
-      currentHumidity.text('Humidity: ' + humidity + ' %')
+      currentHumidity.text('Humidity: ' + humidity + ' %');
+
       cardDiv.append(heading, currentTemp, currentWind, currentHumidity);
 
-       // Update and retrieve search history using Local Storage
-       updateSearchHistory(city);
+      // Update and retrieve search history using Local Storage
+      updateSearchHistory(city);
 
       // Extract latitude and longitude for the forecast
       var lat = currentData.coord.lat;
@@ -65,22 +97,21 @@ function updateWeather(city) {
           return response.json();
         })
         .then(function (forecastData) {
-          // Log the 5-day forecast data
-          console.log(forecastData);
 
           // Extract detailed information for each day
           var dailyInfo = [];
+          // Iterate over the forecast data
           for (var i = 0; i < forecastData.list.length; i += 8) {
-            // Data is provided in 3-hour intervals, so we skip 8 data points to get daily values
+            // Data is provided in 3-hour intervals (24/3=8), so we skip 8 data points to get daily values
             var date = new Date(forecastData.list[i].dt * 1000);
-            var temperature = forecastData.list[i].main.temp;
+            var temperatureCelsiusDaily = kelvinToCelsius(forecastData.list[i].main.temp);
             var humidity = forecastData.list[i].main.humidity;
             var windSpeed = forecastData.list[i].wind.speed;
             var weatherIcon = forecastData.list[i].weather[0].icon;
 
             dailyInfo.push({
               date: date.toLocaleDateString(),
-              temperature: temperature,
+              temperatureCelsius: temperatureCelsiusDaily,
               humidity: humidity,
               windSpeed: windSpeed,
               weatherIcon: weatherIcon
@@ -105,18 +136,14 @@ function updateWeather(city) {
             var weatherIconElement = $('<img class="weather-icon" id="icon">');
             weatherIconElement.attr('src', 'https://openweathermap.org/img/w/' + dayInfo.weatherIcon + '.png');
 
-
-            // Convert temperature from Kelvin to Celsius for daily information
-              var temperatureKelvin = dayInfo.temperature;
-              var temperatureCelsius = temperatureKelvin - 273.15;
-              var temperatureElement = $('<p class="temperature">');
-              temperatureElement.text('Temp: ' + temperatureCelsius.toFixed(2) + ' °C');
+            var temperatureElement = $('<p class="temperature">');
+            temperatureElement.text('Temp: ' + dayInfo.temperatureCelsius + ' °C');
 
             var windSpeedElement = $('<p class="wind-speed">');
-            windSpeedElement.text('Wind: ' + dayInfo.windSpeed);
+            windSpeedElement.text('Wind: ' + dayInfo.windSpeed + ' KPH');
 
             var humidityElement = $('<p class="humidity">');
-            humidityElement.text('Humidity: ' + dayInfo.humidity);
+            humidityElement.text('Humidity: ' + dayInfo.humidity + ' %');
 
             dayContainer.append(dateElement, weatherIconElement, temperatureElement, windSpeedElement, humidityElement);
             forecastContainer.append(dayContainer);
@@ -125,31 +152,12 @@ function updateWeather(city) {
     });
 }
 
-// Function to update and retrieve search history using Local Storage
-function updateSearchHistory(city) {
-  var searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
-  searchHistory.unshift(city);
-  searchHistory = searchHistory.slice(0, 8); // Limit to the last 5 searches
-  localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
-
-  // Update the search history display on the website
-  var historyContainer = $('#history');
-  historyContainer.empty();
-  searchHistory.forEach(function (search) {
-      var historyItem = $('<div class=" btn btn-secondary m-1 history-item">');
-      historyItem.text(search);
-      historyItem.on('click', function () {
-          // On click, update weather for the clicked city
-          updateWeather(search);
-      });
-      historyContainer.append(historyItem);
-  });
-}
-
 // Event listener for the search button
 $('#search-button').on('click', function (event) {
   event.preventDefault(); // Prevent default form submission behavior
+  // Get the value entered in the search input field
   var city = $('#search-input').val();
+  // Call the updateWeather function with the entered city as an argument
   updateWeather(city);
 });
 
