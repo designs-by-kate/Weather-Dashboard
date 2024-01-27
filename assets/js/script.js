@@ -15,22 +15,31 @@ function updateWeather(city) {
       // Log the current weather data
       console.log(currentData);
 
-       // Extract information about the current weather
-       var currentDate = new Date(currentData.dt * 1000);
-       var cityName = currentData.name;
-       var temperature = currentData.main.temp;
-       var humidity = currentData.main.humidity;
-       var windSpeed = currentData.wind.speed;
-       var weatherIcon = currentData.weather[0].icon;
+      // Extract information about the current weather
+      var currentDate = new Date(currentData.dt * 1000);
+      var cityName = currentData.name;
+      var temperature = currentData.main.temp;
+      var humidity = currentData.main.humidity;
+      var windSpeed = currentData.wind.speed;
+      var weatherIcon = currentData.weather[0].icon;
 
-       // Log the additional information
-       console.log("Date: " + currentDate.toLocaleDateString());
-       console.log("City: " + cityName);
-       console.log("Temperature: " + temperature);
-       console.log("Humidity: " + humidity);
-       console.log("Wind Speed: " + windSpeed);
-       console.log("Weather Icon: " + weatherIcon);
-       
+      // Log the additional information
+      var targetDiv = $('#today');
+
+      var cardDiv = $('<div class="card">');
+      targetDiv.append(cardDiv);
+
+      var heading = $('<h5 class="card-title" id="heading">');
+      heading.text(cityName + ' ' + currentDate.toLocaleDateString() + ' ' + weatherIcon);
+
+      var currentTemp = $('<p class="card-text" id="currentTemp">');
+      currentTemp.text('Temperature: ' + temperature)
+      var currentWind = $('<p class="card-text" id="currentWind">');
+      currentWind.text('Wind Speed: ' + windSpeed)
+      var currentHumidity = $('<p class="card-text" id="currentHumidity">');
+      currentHumidity.text('Humidity: ' + humidity)
+      cardDiv.append(heading, currentTemp, currentWind, currentHumidity);
+
       // Extract latitude and longitude for the forecast
       var lat = currentData.coord.lat;
       var lon = currentData.coord.lon;
