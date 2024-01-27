@@ -1,3 +1,5 @@
+https://designs-by-kate.github.io/Weather-Dashboard/
+
 # Weather Application
 
 This is a simple web application that allows users to check the current weather and 5-day forecast for a given city.
