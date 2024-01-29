@@ -6,7 +6,10 @@ $(document).ready(function () {
   function updateSearchHistory(city) {
     var searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
     // Add the current city to the beginning of the search history array
-    searchHistory.unshift(city);
+     // Check if the city is already in the search history
+    if (!searchHistory.includes(city)) {
+      searchHistory.unshift(city);
+    }
     searchHistory = searchHistory.slice(0, 8); // Limit to the last 8 searches
     localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
 
