@@ -5,9 +5,9 @@ $(document).ready(function () {
   // Function to update and retrieve search history using Local Storage
   function updateSearchHistory(city) {
     var searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
-    // Add the current city to the beginning of the search history array
-     // Check if the city is already in the search history
+    // Check if the city is already in the search history
     if (!searchHistory.includes(city)) {
+      // Add the current city to the beginning of the search history array
       searchHistory.unshift(city);
     }
     searchHistory = searchHistory.slice(0, 8); // Limit to the last 8 searches
@@ -20,7 +20,7 @@ $(document).ready(function () {
     // Iterate through each item in the search history
     searchHistory.forEach(function (search) {
       // Create a button element for each search history item
-      var historyItem = $('<div class="btn btn-secondary m-1 history-item">');
+      var historyItem = $('<button class="btn btn-secondary m-1 history-item">');
       // Set the text of the button to the city name
       historyItem.text(search);
       // Attach a click event listener to each history item button
